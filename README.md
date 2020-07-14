@@ -15,27 +15,26 @@
  }
  </code></pre>
 
- <p>The code that creates the initial metadata object is located in file <b>/mixin.ts</b> and should be modified to meet your needs, the code below simply creates a unique ID for the block within the page and a blank data string.</p>
+ <p>The code that creates the initial metadata is located in file <b>/mixin.ts</b> and should be modified to meet your needs, the code below simply creates a unique ID for the block within the page and a blank data string.</p>
 
  <pre><code>
- import {MetaDataBlock} from './types-internal/block-data';
- let counter = 0;
- export default {
-   createMeta() {
-     let id = 'block-' + counter;
-     console.log ( 'Creating Meta: ' + id );
-     const data = '';
-     const existId = () => {
-       if ( document.getElementById(id)) {
-         return true; } else { return false; }
-     };
-     do {
-       counter++;
-       id = 'block-' + counter;
-     } while (existId());
-     return {id, data: ''};
-   },
- };
+import {MetaDataBlock} from './types-internal/block-data';
+import { v4 as uuidv4 } from 'uuid';
+
+
+export default {
+  createMeta(): MetaDataBlock {
+    let id = uuidv4();
+
+    const existId = (id) => Boolean(document.getElementById(id));
+
+    do {
+      id = uuidv4();
+    } while (existId(id));
+
+    return {id, data: ''};
+  },
+};
  </code></pre>
 
  <h3>Using this build</h3>
