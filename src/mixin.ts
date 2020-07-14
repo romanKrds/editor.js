@@ -16,16 +16,16 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default {
   createMeta(): MetaDataBlock {
-    let id = uuidv4();
+    let uuid = uuidv4();
 
-    const existId = (): boolean => Boolean(document.getElementById(id));
+    const existId = (): boolean => Boolean(document.getElementById(uuid));
 
     do {
-      id = uuidv4();
+      uuid = uuidv4();
     } while (existId());
 
     return {
-      id,
+      uuid,
       data: '',
     };
   },

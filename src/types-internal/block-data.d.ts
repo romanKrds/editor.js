@@ -20,6 +20,6 @@ export interface ValidatedData {
 }
 
 export interface MetaDataBlock {
-  id?: string;
+  uuid?: string;
   data?: string;
 }
