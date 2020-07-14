@@ -1,4 +1,5 @@
 import {BlockToolData} from '../tools';
+import { MetaDataBlock } from '../../src/types-internal/block-data';
 
 /**
  * Output of one Tool
@@ -12,6 +13,10 @@ export interface OutputBlockData {
    * Saved Block data
    */
   data: BlockToolData;
+  /**
+   * Meta
+   */
+  metadata?: MetaDataBlock;
 }
 
 export interface OutputData {

@@ -18,3 +18,8 @@ export interface ValidatedData {
     time?: number;
     isValid: boolean;
 }
+
+export interface MetaDataBlock {
+  id?: string;
+  data?: string;
+}

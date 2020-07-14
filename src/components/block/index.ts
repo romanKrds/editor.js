@@ -11,6 +11,8 @@ import {
 } from '../../../types';
 
 import { SavedData } from '../../types-internal/block-data';
+import { MetaDataBlock } from '../../types-internal/block-data';
+import mixin from '../../mixin';
 import $ from '../dom';
 import * as _ from '../utils';
 import ApiModule from '../modules/api';
@@ -51,6 +53,11 @@ interface BlockConstructorOptions {
    * Editor's API methods
    */
   api: ApiModule;
+
+  /**
+   * Meta Object
+   */
+  metadata: MetaDataBlock
 }
 
 /**
@@ -133,6 +140,11 @@ export default class Block {
   public tunes: BlockTune[];
 
   /**
+   * Meta Object
+   **/
+  public metadata: MetaDataBlock;
+
+  /**
    * Tool's user configuration
    */
   public readonly config: ToolConfig;
@@ -199,6 +211,7 @@ export default class Block {
    * @param {BlockToolConstructable} options.Tool — Tool's class
    * @param {ToolSettings} options.settings - default tool's config
    * @param {ApiModule} options.api - Editor API module for pass it to the Block Tunes
+   * @param {Object} metadata - Meta Data Object
    */
   constructor({
     name,
@@ -206,6 +219,7 @@ export default class Block {
     Tool,
     settings,
     api,
+    metadata,
   }: BlockConstructorOptions) {
     this.name = name;
     this.class = Tool;
@@ -213,6 +227,7 @@ export default class Block {
     this.config = settings.config || {};
     this.api = api;
     this.blockAPI = new BlockAPI(this);
+    this.metadata = metadata;
 
     this.mutationObserver = new MutationObserver(this.didMutated);
 
@@ -545,6 +560,7 @@ export default class Block {
           tool: this.name,
           data: finishedExtraction,
           time: measuringEnd - measuringStart,
+          metadata: this.metadata,
         };
       })
       .catch((error) => {
@@ -659,9 +675,13 @@ export default class Block {
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.tool.render();
 
+    if (!Boolean(this.metadata.id)) {
+      this.metadata = mixin.createMeta();
+    }
+
     contentNode.appendChild(pluginsContent);
     wrapper.appendChild(contentNode);
-
+    wrapper.setAttribute('id', this.metadata.id );
     return wrapper;
   }
 }
