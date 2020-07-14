@@ -99,7 +99,7 @@ export default class Renderer extends Module {
       const stub = BlockManager.insert({
         tool: Tools.stubTool,
         data: stubData,
-        metadata
+        metadata,
       });
 
       stub.stretched = true;

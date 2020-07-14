@@ -196,7 +196,7 @@ export default class BlocksAPI extends Module {
    * @param {number?} index — index where to insert new Block
    * @param {boolean?} needToFocus - flag to focus inserted Block
    * @param {boolean?} replace - flag to replace a Block
-   * @param {Object} metadata - Meta DAta Object
+   * @param {object} metadata - Meta Data Object
    */
   public insert = (
     type: string = this.config.initialBlock,
@@ -205,7 +205,7 @@ export default class BlocksAPI extends Module {
     index?: number,
     needToFocus?: boolean,
     replace?: boolean,
-    metadata = {},
+    metadata = {}
   ): void => {
     this.Editor.BlockManager.insert({
       tool: type,

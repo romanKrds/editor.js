@@ -15,8 +15,8 @@ export default class SaverAPI extends Module {
   public get methods(): Saver {
     return {
       save: (): Promise<OutputData> => this.save(),
-      disableModificationsObserver: () => this.disableModificationsObserver(),
-      enableModificationsObserver: () => this.enableModificationsObserver(),
+      disableModificationsObserver: (): void => this.disableModificationsObserver(),
+      enableModificationsObserver: (): void => this.enableModificationsObserver(),
     };
   }
 

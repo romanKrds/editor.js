@@ -10,8 +10,7 @@ import {
   ToolSettings
 } from '../../../types';
 
-import { SavedData } from '../../types-internal/block-data';
-import { MetaDataBlock } from '../../types-internal/block-data';
+import { SavedData, MetaDataBlock } from '../../types-internal/block-data';
 import mixin from '../../mixin';
 import $ from '../dom';
 import * as _ from '../utils';
@@ -57,8 +56,8 @@ interface BlockConstructorOptions {
   /**
    * Meta Object
    */
-  metadata: MetaDataBlock
-}
+  metadata: MetaDataBlock;
+};
 
 /**
  * @class Block
@@ -141,7 +140,7 @@ export default class Block {
 
   /**
    * Meta Object
-   **/
+   */
   public metadata: MetaDataBlock;
 
   /**
@@ -211,7 +210,7 @@ export default class Block {
    * @param {BlockToolConstructable} options.Tool — Tool's class
    * @param {ToolSettings} options.settings - default tool's config
    * @param {ApiModule} options.api - Editor API module for pass it to the Block Tunes
-   * @param {Object} metadata - Meta Data Object
+   * @param {MetaDataBlock} options.metadata - Meta Data Object
    */
   constructor({
     name,
@@ -675,13 +674,14 @@ export default class Block {
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.tool.render();
 
-    if (!Boolean(this.metadata.id)) {
+    if (!this.metadata.id) {
       this.metadata = mixin.createMeta();
     }
 
     contentNode.appendChild(pluginsContent);
     wrapper.appendChild(contentNode);
-    wrapper.setAttribute('id', this.metadata.id );
+    wrapper.setAttribute('id', this.metadata.id);
+
     return wrapper;
   }
 }

@@ -55,6 +55,7 @@ export default class Saver extends Module {
    */
   public disableModificationsObserver(): void {
     const { ModificationsObserver } = this.Editor;
+
     ModificationsObserver.disable();
   }
 
@@ -65,6 +66,7 @@ export default class Saver extends Module {
    */
   public enableModificationsObserver(): void {
     const { ModificationsObserver } = this.Editor;
+
     ModificationsObserver.enable();
   }
 
