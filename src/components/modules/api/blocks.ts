@@ -4,6 +4,7 @@ import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
+import { MetaDataBlock } from '../../../types-internal/block-data';
 
 /**
  * @class BlocksAPI
@@ -190,23 +191,35 @@ export default class BlocksAPI extends Module {
   /**
    * Insert new Block
    *
-   * @param {string} type — Tool name
-   * @param {BlockToolData} data — Tool data to insert
-   * @param {ToolConfig} config — Tool config
-   * @param {number?} index — index where to insert new Block
-   * @param {boolean?} needToFocus - flag to focus inserted Block
-   * @param {boolean?} replace - flag to replace a Block
-   * @param {object} metadata - Meta Data Object
+   * @param {object} options - insert options
+   * @param {string} options.type — Tool name
+   * @param {BlockToolData} options.data — Tool data to insert
+   * @param {ToolConfig} options.config — Tool config
+   * @param {number?} options.index — index where to insert new Block
+   * @param {boolean?} options.needToFocus - flag to focus inserted Block
+   * @param {boolean?} options.replace - flag to replace a Block
+   * @param {object} options.metadata - Meta Data Object
+   * @param {boolean} options.replaceByUUID - flag shows if block should be replaced by UUID
    */
-  public insert = (
-    type: string = this.config.initialBlock,
-    data: BlockToolData = {},
-    config: ToolConfig = {},
-    index?: number,
-    needToFocus?: boolean,
-    replace?: boolean,
-    metadata = {}
-  ): void => {
+  public insert = ({
+    type = this.config.initialBlock,
+    data = {},
+    config = {},
+    index,
+    needToFocus = false,
+    replace = false,
+    metadata = {},
+    replaceByUUID = false,
+  }: {
+    type?: string;
+    data?: BlockToolData;
+    config?: ToolConfig;
+    index?: number;
+    needToFocus?: boolean;
+    replace?: boolean;
+    metadata?: MetaDataBlock;
+    replaceByUUID?: boolean;
+  } = {}): void => {
     this.Editor.BlockManager.insert({
       tool: type,
       data,
@@ -214,6 +227,7 @@ export default class BlocksAPI extends Module {
       needToFocus,
       replace,
       metadata,
+      replaceByUUID,
     });
   }
 

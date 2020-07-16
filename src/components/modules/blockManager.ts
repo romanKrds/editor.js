@@ -240,6 +240,7 @@ export default class BlockManager extends Module {
    * @param {boolean} options.needToFocus - flag shows if needed to update current Block index
    * @param {boolean} options.replace - flag shows if block by passed index should be replaced with inserted one
    * @param {object} options.metadata - Meta Data Object
+   * @param {boolean} options.replaceByUUID - flag shows if block should be replaced by UUID rather than index
    *
    * @returns {Block}
    */
@@ -250,6 +251,7 @@ export default class BlockManager extends Module {
     needToFocus = true,
     replace = false,
     metadata = {},
+    replaceByUUID = false,
   }: {
     tool?: string;
     data?: BlockToolData;
@@ -257,11 +259,17 @@ export default class BlockManager extends Module {
     needToFocus?: boolean;
     replace?: boolean;
     metadata?: MetaDataBlock;
+    replaceByUUID?: boolean;
   } = {}): Block {
     let newIndex = index;
 
-    if (newIndex === undefined) {
+    if (newIndex === undefined && !replaceByUUID) {
       newIndex = this.currentBlockIndex + (replace ? 0 : 1);
+    } else if (replace && replaceByUUID && metadata.uuid) {
+      const { blocks } = this._blocks;
+      const targetBlock = blocks.find(block => block.metadata?.uuid === metadata.uuid);
+
+      newIndex = blocks?.indexOf(targetBlock);
     }
 
     const block = this.composeBlock({

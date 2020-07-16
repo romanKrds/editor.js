@@ -1,6 +1,7 @@
 import {OutputData} from '../data-formats/output-data';
 import {BlockToolData, ToolConfig} from '../tools';
 import {BlockAPI} from './block';
+import {MetaDataBlock} from "../../src/types-internal/block-data";
 
 /**
  * Describes methods to manipulate with Editor`s blocks
@@ -84,18 +85,33 @@ export interface Blocks {
   /**
    * Insert new Block
    *
-   * @param {string} type — Tool name
-   * @param {BlockToolData} data — Tool data to insert
-   * @param {ToolConfig} config — Tool config
-   * @param {number?} index — index where to insert new Block
-   * @param {boolean?} needToFocus - flag to focus inserted Block
+   * @param {object} options - insert options
+   * @param {string} options.type — Tool name
+   * @param {BlockToolData} options.data — Tool data to insert
+   * @param {ToolConfig} options.config — Tool config
+   * @param {number?} options.index — index where to insert new Block
+   * @param {boolean?} options.needToFocus - flag to focus inserted Block
+   * @param {boolean?} options.replace - flag to replace a Block
+   * @param {object} options.metadata - Meta Data Object
+   * @param {boolean} options.replaceByUUID - flag shows if block should be replaced by UUID
    */
-  insert(
-    type?: string,
-    data?: BlockToolData,
-    config?: ToolConfig,
-    index?: number,
-    needToFocus?: boolean,
-  ): void;
-
+  insert({
+    type,
+    data,
+    config,
+    index,
+    needToFocus,
+    replace,
+    metadata,
+    replaceByUUID,
+  }: {
+    type?: string;
+    data?: BlockToolData;
+    config?: ToolConfig;
+    index?: number;
+    needToFocus?: boolean;
+    replace?: boolean;
+    metadata?: MetaDataBlock;
+    replaceByUUID?: boolean;
+  }): void;
 }
