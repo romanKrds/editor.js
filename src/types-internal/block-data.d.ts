@@ -21,5 +21,4 @@ export interface ValidatedData {
 
 export interface MetaDataBlock {
   serviceKey?: string;
-  data?: string;
 }

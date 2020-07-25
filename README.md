@@ -27,7 +27,6 @@ export default {
 
     return {
         serviceKey: uuidv4(),
-        data: ''
     };
   },
 };

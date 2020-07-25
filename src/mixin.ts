@@ -18,7 +18,6 @@ export default {
   createMeta(): MetaDataBlock {
     return {
       serviceKey: uuidv4(),
-      data: '',
     };
   },
 };
