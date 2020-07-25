@@ -240,7 +240,7 @@ export default class BlockManager extends Module {
    * @param {boolean} options.needToFocus - flag shows if needed to update current Block index
    * @param {boolean} options.replace - flag shows if block by passed index should be replaced with inserted one
    * @param {object} options.metadata - Meta Data Object
-   * @param {boolean} options.replaceByUUID - flag shows if block should be replaced by UUID rather than index
+   * @param {boolean} options.replaceByServiceKey - flag shows if block should be replaced by serviceKey rather than index
    *
    * @returns {Block}
    */
@@ -251,7 +251,7 @@ export default class BlockManager extends Module {
     needToFocus = true,
     replace = false,
     metadata = {},
-    replaceByUUID = false,
+    replaceByServiceKey = false,
   }: {
     tool?: string;
     data?: BlockToolData;
@@ -259,15 +259,15 @@ export default class BlockManager extends Module {
     needToFocus?: boolean;
     replace?: boolean;
     metadata?: MetaDataBlock;
-    replaceByUUID?: boolean;
+    replaceByServiceKey?: boolean;
   } = {}): Block {
     let newIndex = index;
 
-    if (newIndex === undefined && !replaceByUUID) {
+    if (newIndex === undefined && !replaceByServiceKey) {
       newIndex = this.currentBlockIndex + (replace ? 0 : 1);
-    } else if (replace && replaceByUUID && metadata.uuid) {
+    } else if (replace && replaceByServiceKey && metadata.serviceKey) {
       const { blocks } = this._blocks;
-      const targetBlock = blocks.find(block => block.metadata?.uuid === metadata.uuid);
+      const targetBlock = blocks.find(block => block.metadata?.serviceKey === metadata.serviceKey);
 
       newIndex = blocks?.indexOf(targetBlock);
     }

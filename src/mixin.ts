@@ -16,16 +16,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default {
   createMeta(): MetaDataBlock {
-    let uuid = uuidv4();
-
-    const existId = (): boolean => Boolean(document.getElementById(uuid));
-
-    do {
-      uuid = uuidv4();
-    } while (existId());
-
     return {
-      uuid,
+      serviceKey: uuidv4(),
       data: '',
     };
   },

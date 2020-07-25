@@ -199,7 +199,7 @@ export default class BlocksAPI extends Module {
    * @param {boolean?} options.needToFocus - flag to focus inserted Block
    * @param {boolean?} options.replace - flag to replace a Block
    * @param {object} options.metadata - Meta Data Object
-   * @param {boolean} options.replaceByUUID - flag shows if block should be replaced by UUID
+   * @param {boolean} options.replaceByServiceKey - flag shows if block should be replaced by serviceKey
    */
   public insert = ({
     type = this.config.initialBlock,
@@ -209,7 +209,7 @@ export default class BlocksAPI extends Module {
     needToFocus = false,
     replace = false,
     metadata = {},
-    replaceByUUID = false,
+    replaceByServiceKey = false,
   }: {
     type?: string;
     data?: BlockToolData;
@@ -218,7 +218,7 @@ export default class BlocksAPI extends Module {
     needToFocus?: boolean;
     replace?: boolean;
     metadata?: MetaDataBlock;
-    replaceByUUID?: boolean;
+    replaceByServiceKey?: boolean;
   } = {}): void => {
     this.Editor.BlockManager.insert({
       tool: type,
@@ -227,7 +227,7 @@ export default class BlocksAPI extends Module {
       needToFocus,
       replace,
       metadata,
-      replaceByUUID,
+      replaceByServiceKey,
     });
   }
 

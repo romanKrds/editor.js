@@ -10,7 +10,7 @@
 
 <pre><code>
  export interface MetaDataBlock {
-   id?: string;
+   serviceKey?: string;
    data?: string;
  }
  </code></pre>
@@ -24,15 +24,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default {
   createMeta(): MetaDataBlock {
-    let id = uuidv4();
 
-    const existId = (id) => Boolean(document.getElementById(id));
-
-    do {
-      id = uuidv4();
-    } while (existId(id));
-
-    return {id, data: ''};
+    return {
+        serviceKey: uuidv4(),
+        data: ''
+    };
   },
 };
  </code></pre>

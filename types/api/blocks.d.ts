@@ -93,7 +93,7 @@ export interface Blocks {
    * @param {boolean?} options.needToFocus - flag to focus inserted Block
    * @param {boolean?} options.replace - flag to replace a Block
    * @param {object} options.metadata - Meta Data Object
-   * @param {boolean} options.replaceByUUID - flag shows if block should be replaced by UUID
+   * @param {boolean} options.replaceByServiceKey - flag shows if block should be replaced by serviceKey
    */
   insert({
     type,
@@ -103,7 +103,7 @@ export interface Blocks {
     needToFocus,
     replace,
     metadata,
-    replaceByUUID,
+    replaceByServiceKey,
   }: {
     type?: string;
     data?: BlockToolData;
@@ -112,6 +112,6 @@ export interface Blocks {
     needToFocus?: boolean;
     replace?: boolean;
     metadata?: MetaDataBlock;
-    replaceByUUID?: boolean;
+    replaceByServiceKey?: boolean;
   }): void;
 }

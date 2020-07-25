@@ -674,13 +674,13 @@ export default class Block {
         contentNode = $.make('div', Block.CSS.content),
         pluginsContent = this.tool.render();
 
-    if (!this.metadata.uuid) {
+    if (!this.metadata.serviceKey) {
       this.metadata = mixin.createMeta();
     }
 
     contentNode.appendChild(pluginsContent);
     wrapper.appendChild(contentNode);
-    wrapper.setAttribute('id', this.metadata.uuid);
+    wrapper.setAttribute('id', this.metadata.serviceKey);
 
     return wrapper;
   }
