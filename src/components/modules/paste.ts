@@ -462,7 +462,8 @@ export default class Paste extends Module {
 
     dataToInsert.forEach(
       (data, i) => {
-        BlockManager.paste(data.type, data.event, i === 0 && needToReplaceCurrentBlock);
+        const shouldReplace = i === 0 && needToReplaceCurrentBlock
+        BlockManager.paste(data.type, data.event, shouldReplace, shouldReplace && BlockManager.currentBlock.metadata);
       }
     );
   }
@@ -652,7 +653,7 @@ export default class Paste extends Module {
           Tools.isInitial(BlockManager.currentBlock.tool) &&
           BlockManager.currentBlock.isEmpty;
 
-        const insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
+        const insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock, needToReplaceCurrentBlock && BlockManager.currentBlock.metadata);
 
         Caret.setToBlock(insertedBlock, Caret.positions.END);
 
@@ -721,7 +722,7 @@ export default class Paste extends Module {
     let block: Block;
 
     if (canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty) {
-      block = BlockManager.paste(data.tool, data.event, true);
+      block = BlockManager.paste(data.tool, data.event, true, BlockManager.currentBlock.metadata);
       Caret.setToBlock(block, Caret.positions.END);
 
       return;
@@ -754,6 +755,7 @@ export default class Paste extends Module {
       BlockManager.insert({
         tool,
         data,
+        metadata: needToReplaceCurrentBlock ? BlockManager.currentBlock.metadata : {},
         replace: needToReplaceCurrentBlock,
       });
     });

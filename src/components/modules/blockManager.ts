@@ -295,16 +295,19 @@ export default class BlockManager extends Module {
    * @param {object} options - replace options
    * @param {string} options.tool — plugin name
    * @param {BlockToolData} options.data — plugin data
+   * @param {MetaDataBlock} options.metadata — block's metadata - for the case when we paste content e.g. image url and block is replaced to an image
    *
    * @returns {Block}
    */
   public replace({
     tool = this.config.initialBlock,
     data = {},
+    metadata = {},
   }): Block {
     return this.insert({
       tool,
       data,
+      metadata,
       index: this.currentBlockIndex,
       replace: true,
     });
@@ -316,15 +319,18 @@ export default class BlockManager extends Module {
    * @param {string} toolName - name of Tool to insert
    * @param {PasteEvent} pasteEvent - pasted data
    * @param {boolean} replace - should replace current block
+   * @param {MetaDataBlock} metadata - block metadata
    */
   public paste(
     toolName: string,
     pasteEvent: PasteEvent,
-    replace = false
+    replace = false,
+    metadata: MetaDataBlock = {},
   ): Block {
     const block = this.insert({
       tool: toolName,
       replace,
+      metadata,
     });
 
     try {

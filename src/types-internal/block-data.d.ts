@@ -7,6 +7,7 @@ export interface SavedData {
     tool: string;
     data: BlockToolData;
     time: number;
+    metadata: MetaDataBlock;
 }
 
 /**

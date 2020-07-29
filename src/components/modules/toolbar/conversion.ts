@@ -169,6 +169,7 @@ export default class ConversionToolbar extends Module {
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
     const { INTERNAL_SETTINGS } = this.Editor.Tools;
     const blockData = savedBlock.data;
+    const { metadata } = savedBlock;
 
     /**
      * When current Block name is equals to the replacing tool Name,
@@ -236,6 +237,7 @@ export default class ConversionToolbar extends Module {
     this.Editor.BlockManager.replace({
       tool: replacingToolName,
       data: newBlockData,
+      metadata,
     });
     this.Editor.BlockSelection.clearSelection();
 
