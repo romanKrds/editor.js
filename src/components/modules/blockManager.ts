@@ -660,6 +660,9 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved so that current block index changed */
     this.currentBlockIndex = toIndex;
+    const moveEvent = new CustomEvent('moveBlock', {detail: {toIndex, fromIndex, serviceKey: this.currentBlock.metadata.serviceKey}});
+    const element = document.querySelector(`#${this.config.holder}`);
+    element.dispatchEvent(moveEvent);
   }
 
   /**
