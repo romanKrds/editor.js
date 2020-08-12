@@ -59,6 +59,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script><!-- Marker -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script><!-- Inline Code -->
+  <script src="../../editrjs-tool-page/dist"></script><!-- Inline Code -->
 
   <!-- Load Editor.js's Core -->
   <script src="../dist/editor.js"></script>
@@ -97,7 +98,13 @@
           },
           shortcut: 'CMD+SHIFT+H'
         },
-
+        page: {
+          class: Page,
+          config: {
+            preserveBlank: true,
+            // wikiPageEndpoint: `${this.environment.clientEndpoint}wiki`,
+          },
+        },
         paragraph: {
           config: {
             preserveBlank: true,
