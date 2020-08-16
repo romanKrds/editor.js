@@ -266,10 +266,7 @@ export default class BlockManager extends Module {
     if (newIndex === undefined && !replaceByServiceKey) {
       newIndex = this.currentBlockIndex + (replace ? 0 : 1);
     } else if (replace && replaceByServiceKey && metadata.serviceKey) {
-      const { blocks } = this._blocks;
-      const targetBlock = blocks.find(block => block.metadata?.serviceKey === metadata.serviceKey);
-
-      newIndex = blocks?.indexOf(targetBlock);
+      newIndex = this.getBlockIndexByServiceKey(metadata.serviceKey);
     }
 
     const block = this.composeBlock({
@@ -414,10 +411,13 @@ export default class BlockManager extends Module {
   /**
    * Remove block with passed index or remove last
    *
-   * @param {number|null} index - index of Block to remove
+   * @param {number|null} rawIndex - index of Block to remove
+   * @param {string} serviceKey - serviceKey of Block to remove
    * @throws {Error} if Block to remove is not found
    */
-  public removeBlock(index = this.currentBlockIndex): void {
+  public removeBlock(rawIndex = this.currentBlockIndex, serviceKey?: string): void {
+    const index = Boolean(serviceKey) ? this.getBlockIndexByServiceKey(serviceKey) : rawIndex;
+
     /**
      * If index is not passed and there is no block selected, show a warning
      */
@@ -719,5 +719,19 @@ export default class BlockManager extends Module {
    */
   private validateIndex(index: number): boolean {
     return !(index < 0 || index >= this._blocks.length);
+  }
+
+  /**
+   * Returns block index according to the provided serviceKey
+   *
+   * @param {string} serviceKey - index of blocks array to validate
+   *
+   * @returns {number}
+   */
+  private getBlockIndexByServiceKey(serviceKey: string): number {
+    const { blocks } = this._blocks;
+    const targetBlock = blocks.find(block => block.metadata?.serviceKey === serviceKey);
+
+    return blocks?.indexOf(targetBlock);
   }
 }

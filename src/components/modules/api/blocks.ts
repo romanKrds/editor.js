@@ -21,7 +21,7 @@ export default class BlocksAPI extends Module {
       clear: (): void => this.clear(),
       render: (data: OutputData): Promise<void> => this.render(data),
       renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
-      delete: (index?: number): void => this.delete(index),
+      delete: (index?: number, serviceKey?: string): void => this.delete(index, serviceKey),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
       getBlockByIndex: (index: number): BlockAPIInterface => this.getBlockByIndex(index),
@@ -107,10 +107,11 @@ export default class BlocksAPI extends Module {
    * Deletes Block
    *
    * @param {number} blockIndex - index of Block to delete
+   * @param {number} serviceKey - serviceKey of Block to delete
    */
-  public delete(blockIndex?: number): void {
+  public delete(blockIndex?: number, serviceKey?: string): void {
     try {
-      this.Editor.BlockManager.removeBlock(blockIndex);
+      this.Editor.BlockManager.removeBlock(blockIndex, serviceKey);
     } catch (e) {
       _.logLabeled(e, 'warn');
 
@@ -128,7 +129,9 @@ export default class BlocksAPI extends Module {
     /**
      * After Block deletion currentBlock is updated
      */
-    this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
+    if (this.Editor.BlockManager.currentBlock) {
+      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
+    }
 
     this.Editor.Toolbar.close();
   }
