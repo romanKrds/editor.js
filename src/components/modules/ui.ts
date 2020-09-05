@@ -616,7 +616,7 @@ export default class UI extends Module {
       /**
        * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
        */
-      if (!this.Editor.RectangleSelection.isRectActivated()) {
+      if (!this.Editor.RectangleSelection.isRectActivated() && !this.config.isReadonly) {
         this.Editor.Caret.setToTheLastBlock();
       }
     }

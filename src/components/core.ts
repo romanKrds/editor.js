@@ -95,6 +95,9 @@ export default class Core {
            */
           this.moduleInstances.UI.removeLoader();
 
+          if (this.config.isReadonly) {
+            await this.disableEditing();
+          }
           /**
            * Resolve this.isReady promise
            */
@@ -273,16 +276,23 @@ export default class Core {
    * @returns {Promise<void>}
    */
   public async start(): Promise<void> {
-    const modulesToPrepare = [
-      'Tools',
-      'UI',
-      'BlockManager',
-      'Paste',
-      'DragNDrop',
-      'ModificationsObserver',
-      'BlockSelection',
-      'RectangleSelection',
-    ];
+    const modulesToPrepare = this.config.isReadonly
+      ? [
+        'Tools',
+        'UI',
+        'BlockManager',
+        'ModificationsObserver',
+      ]
+      : [
+        'Tools',
+        'UI',
+        'BlockManager',
+        'Paste',
+        'DragNDrop',
+        'ModificationsObserver',
+        'BlockSelection',
+        'RectangleSelection',
+      ];
 
     await modulesToPrepare.reduce(
       (promise, module) => promise.then(async () => {
@@ -348,6 +358,28 @@ export default class Core {
         this.moduleInstances[name].state = this.getModulesDiff(name);
       }
     }
+  }
+
+  /**
+   * disables editor. As some tools swaps content according to the input parameters
+   * function performed as async to catch swapped blocks
+   *
+   * @returns {Promise<void>}
+   */
+  private async disableEditing(): Promise<void> {
+    const editorEl = typeof this.config.holder === 'string'
+      ? $.get(this.config.holder)
+      : this.config.holder;
+
+    return new Promise(resolve => setTimeout(() => {
+      const editableElements = editorEl.querySelectorAll('[contenteditable=true]');
+      const iconSettings = editorEl.querySelectorAll('.ce-toolbar__settings-btn');
+
+      editableElements.forEach(el => el.removeAttribute('contenteditable'));
+      iconSettings.forEach(el => el.remove());
+
+      return resolve();
+    }, 1000));
   }
 
   /**

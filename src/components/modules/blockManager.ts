@@ -225,7 +225,9 @@ export default class BlockManager extends Module {
       metadata,
     });
 
-    this.bindEvents(block);
+    if (!this.config.isReadonly) {
+      this.bindEvents(block);
+    }
 
     return block;
   }
