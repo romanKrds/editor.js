@@ -215,6 +215,7 @@ export default class BlockManager extends Module {
    */
   public composeBlock({ tool, data = {}, metadata = {} }: {tool: string; data?: BlockToolData; metadata?: MetaDataBlock }): Block {
     const settings = this.Editor.Tools.getToolSettings(tool);
+    const isReadonly = this.config.isReadonly || false;
     const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
     const block = new Block({
       name: tool,
@@ -223,6 +224,7 @@ export default class BlockManager extends Module {
       settings,
       api: this.Editor.API,
       metadata,
+      isReadonly,
     });
 
     if (!this.config.isReadonly) {

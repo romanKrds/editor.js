@@ -57,6 +57,11 @@ interface BlockConstructorOptions {
    * Meta Object
    */
   metadata: MetaDataBlock;
+
+  /**
+   * Flag that shows is editor in read only mode
+   */
+  isReadonly: boolean;
 };
 
 /**
@@ -211,6 +216,7 @@ export default class Block {
    * @param {ToolSettings} options.settings - default tool's config
    * @param {ApiModule} options.api - Editor API module for pass it to the Block Tunes
    * @param {MetaDataBlock} options.metadata - Meta Data Object
+   * @param {boolean} options.isReadonly - is editor in read only mode
    */
   constructor({
     name,
@@ -219,11 +225,15 @@ export default class Block {
     settings,
     api,
     metadata,
+    isReadonly,
   }: BlockConstructorOptions) {
     this.name = name;
     this.class = Tool;
     this.settings = settings;
-    this.config = settings.config || {};
+    this.config = {
+      ...settings.config || {},
+      isReadonly,
+    };
     this.api = api;
     this.blockAPI = new BlockAPI(this);
     this.metadata = metadata;
