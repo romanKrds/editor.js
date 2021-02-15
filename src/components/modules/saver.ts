@@ -49,6 +49,28 @@ export default class Saver extends Module {
   }
 
   /**
+   * disables ModificationsObserver to stop listen for changes
+   *
+   * @returns {void}
+   */
+  public disableModificationsObserver(): void {
+    const { ModificationsObserver } = this.Editor;
+
+    ModificationsObserver.disable();
+  }
+
+  /**
+   * enables ModificationsObserver to start listen for changes
+   *
+   * @returns {void}
+   */
+  public enableModificationsObserver(): void {
+    const { ModificationsObserver } = this.Editor;
+
+    ModificationsObserver.enable();
+  }
+
+  /**
    * Saves and validates
    *
    * @param {Block} block - Editor's Tool
@@ -76,7 +98,7 @@ export default class Saver extends Module {
 
     _.log('[Editor.js saving]:', 'groupCollapsed');
 
-    allExtractedData.forEach(({ tool, data, time, isValid }) => {
+    allExtractedData.forEach(({ tool, data, time, isValid, metadata }) => {
       totalTime += time;
 
       /**
@@ -105,6 +127,7 @@ export default class Saver extends Module {
       blocks.push({
         type: tool,
         data,
+        metadata,
       });
     });
 

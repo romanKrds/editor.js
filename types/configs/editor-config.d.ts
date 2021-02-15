@@ -69,6 +69,11 @@ export interface EditorConfig {
   i18n?: I18nConfig;
 
   /**
+   *  show if editor is readonly
+   */
+  isReadonly?: boolean;
+
+  /**
    * Fires when Editor is ready to work
    */
   onReady?(): void;

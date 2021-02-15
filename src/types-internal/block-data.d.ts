@@ -7,6 +7,7 @@ export interface SavedData {
     tool: string;
     data: BlockToolData;
     time: number;
+    metadata: MetaDataBlock;
 }
 
 /**
@@ -17,4 +18,8 @@ export interface ValidatedData {
     data?: BlockToolData;
     time?: number;
     isValid: boolean;
+}
+
+export interface MetaDataBlock {
+  serviceKey?: string;
 }

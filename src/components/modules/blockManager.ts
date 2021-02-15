@@ -12,6 +12,8 @@ import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
 import { BlockToolConstructable, BlockToolData, PasteEvent } from '../../../types';
+import { MetaDataBlock } from '../../types-internal/block-data';
+import mixin from '../../mixin';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -207,11 +209,13 @@ export default class BlockManager extends Module {
    * @param {object} options - block creation options
    * @param {string} options.tool - tools passed in editor config {@link EditorConfig#tools}
    * @param {BlockToolData} [options.data] - constructor params
+   * @param {object} options.metadata - Meta Data Block
    *
    * @returns {Block}
    */
-  public composeBlock({ tool, data = {} }: {tool: string; data?: BlockToolData}): Block {
+  public composeBlock({ tool, data = {}, metadata = {} }: {tool: string; data?: BlockToolData; metadata?: MetaDataBlock }): Block {
     const settings = this.Editor.Tools.getToolSettings(tool);
+    const isReadonly = this.config.isReadonly || false;
     const Tool = this.Editor.Tools.available[tool] as BlockToolConstructable;
     const block = new Block({
       name: tool,
@@ -219,9 +223,13 @@ export default class BlockManager extends Module {
       Tool,
       settings,
       api: this.Editor.API,
+      metadata,
+      isReadonly,
     });
 
-    this.bindEvents(block);
+    if (!this.config.isReadonly) {
+      this.bindEvents(block);
+    }
 
     return block;
   }
@@ -235,6 +243,8 @@ export default class BlockManager extends Module {
    * @param {number} options.index - index where to insert new Block
    * @param {boolean} options.needToFocus - flag shows if needed to update current Block index
    * @param {boolean} options.replace - flag shows if block by passed index should be replaced with inserted one
+   * @param {object} options.metadata - Meta Data Object
+   * @param {boolean} options.replaceByServiceKey - flag shows if block should be replaced by serviceKey rather than index
    *
    * @returns {Block}
    */
@@ -244,22 +254,29 @@ export default class BlockManager extends Module {
     index,
     needToFocus = true,
     replace = false,
+    metadata = {},
+    replaceByServiceKey = false,
   }: {
     tool?: string;
     data?: BlockToolData;
     index?: number;
     needToFocus?: boolean;
     replace?: boolean;
+    metadata?: MetaDataBlock;
+    replaceByServiceKey?: boolean;
   } = {}): Block {
     let newIndex = index;
 
-    if (newIndex === undefined) {
+    if (newIndex === undefined && !replaceByServiceKey) {
       newIndex = this.currentBlockIndex + (replace ? 0 : 1);
+    } else if (replace && replaceByServiceKey && metadata.serviceKey) {
+      newIndex = this.getBlockIndexByServiceKey(metadata.serviceKey);
     }
 
     const block = this.composeBlock({
       tool,
       data,
+      metadata: metadata || mixin.createMeta(),
     });
 
     this._blocks.insert(newIndex, block, replace);
@@ -279,16 +296,19 @@ export default class BlockManager extends Module {
    * @param {object} options - replace options
    * @param {string} options.tool — plugin name
    * @param {BlockToolData} options.data — plugin data
+   * @param {MetaDataBlock} options.metadata — block's metadata - for the case when we paste content e.g. image url and block is replaced to an image
    *
    * @returns {Block}
    */
   public replace({
     tool = this.config.initialBlock,
     data = {},
+    metadata = {},
   }): Block {
     return this.insert({
       tool,
       data,
+      metadata,
       index: this.currentBlockIndex,
       replace: true,
     });
@@ -300,15 +320,18 @@ export default class BlockManager extends Module {
    * @param {string} toolName - name of Tool to insert
    * @param {PasteEvent} pasteEvent - pasted data
    * @param {boolean} replace - should replace current block
+   * @param {MetaDataBlock} metadata - block metadata
    */
   public paste(
     toolName: string,
     pasteEvent: PasteEvent,
-    replace = false
+    replace = false,
+    metadata: MetaDataBlock = {},
   ): Block {
     const block = this.insert({
       tool: toolName,
       replace,
+      metadata,
     });
 
     try {
@@ -331,7 +354,10 @@ export default class BlockManager extends Module {
    * @returns {Block} inserted Block
    */
   public insertInitialBlockAtIndex(index: number, needToFocus = false): Block {
-    const block = this.composeBlock({ tool: this.config.initialBlock });
+    const block = this.composeBlock({
+      tool: this.config.initialBlock,
+      metadata: mixin.createMeta(),
+    });
 
     this._blocks[index] = block;
 
@@ -389,10 +415,13 @@ export default class BlockManager extends Module {
   /**
    * Remove block with passed index or remove last
    *
-   * @param {number|null} index - index of Block to remove
+   * @param {number|null} rawIndex - index of Block to remove
+   * @param {string} serviceKey - serviceKey of Block to remove
    * @throws {Error} if Block to remove is not found
    */
-  public removeBlock(index = this.currentBlockIndex): void {
+  public removeBlock(rawIndex = this.currentBlockIndex, serviceKey?: string): void {
+    const index = Boolean(serviceKey) ? this.getBlockIndexByServiceKey(serviceKey) : rawIndex;
+
     /**
      * If index is not passed and there is no block selected, show a warning
      */
@@ -635,6 +664,9 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved so that current block index changed */
     this.currentBlockIndex = toIndex;
+    const moveEvent = new CustomEvent('moveBlock', {detail: {toIndex, fromIndex, serviceKey: this.currentBlock.metadata.serviceKey}});
+    const element = document.querySelector(`#${this.config.holder}`);
+    element.dispatchEvent(moveEvent);
   }
 
   /**
@@ -691,5 +723,19 @@ export default class BlockManager extends Module {
    */
   private validateIndex(index: number): boolean {
     return !(index < 0 || index >= this._blocks.length);
+  }
+
+  /**
+   * Returns block index according to the provided serviceKey
+   *
+   * @param {string} serviceKey - index of blocks array to validate
+   *
+   * @returns {number}
+   */
+  private getBlockIndexByServiceKey(serviceKey: string): number {
+    const { blocks } = this._blocks;
+    const targetBlock = blocks.find(block => block.metadata?.serviceKey === serviceKey);
+
+    return blocks?.indexOf(targetBlock);
   }
 }

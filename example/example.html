@@ -21,7 +21,7 @@
       </div>
     </div>
     <div class="ce-example__content _ce-example__content--small">
-      <div id="editorjs"></div>
+      <div id="my-editor-js"></div>
 
       <div class="ce-example__button" id="saveButton">
         editor.save()
@@ -59,6 +59,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script><!-- Marker -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script><!-- Inline Code -->
+  <script src="../../editrjs-tool-page/dist"></script><!-- Inline Code -->
 
   <!-- Load Editor.js's Core -->
   <script src="../dist/editor.js"></script>
@@ -75,10 +76,12 @@
      * @see docs/installation.md for mode details
      */
     var editor = new EditorJS({
+      logLevel: 'ERROR',
+      autofocus: true,
       /**
        * Wrapper of Editor
        */
-      holder: 'editorjs',
+      holder: 'my-editor-js',
 
       /**
        * Tools list
@@ -95,7 +98,18 @@
           },
           shortcut: 'CMD+SHIFT+H'
         },
-
+        page: {
+          class: Page,
+          config: {
+            preserveBlank: true,
+            // wikiPageEndpoint: `${this.environment.clientEndpoint}wiki`,
+          },
+        },
+        paragraph: {
+          config: {
+            preserveBlank: true,
+          },
+        },
         /**
          * Or pass class directly without any configuration
          */
@@ -263,8 +277,9 @@
       onReady: function(){
         saveButton.click();
       },
-      onChange: function() {
-        console.log('something changed');
+      onChange: function(api) {
+        api.saver.save()
+          // .then(value => console.log(value.blocks.pop()?.metadata.serviceKey));
       }
     });
 

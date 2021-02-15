@@ -4,6 +4,7 @@ import { BlockAPI as BlockAPIInterface, Blocks } from '../../../../types/api';
 import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import * as _ from './../../utils';
 import BlockAPI from '../../block/api';
+import { MetaDataBlock } from '../../../types-internal/block-data';
 
 /**
  * @class BlocksAPI
@@ -20,7 +21,7 @@ export default class BlocksAPI extends Module {
       clear: (): void => this.clear(),
       render: (data: OutputData): Promise<void> => this.render(data),
       renderFromHTML: (data: string): Promise<void> => this.renderFromHTML(data),
-      delete: (index?: number): void => this.delete(index),
+      delete: (index?: number, serviceKey?: string): void => this.delete(index, serviceKey),
       swap: (fromIndex: number, toIndex: number): void => this.swap(fromIndex, toIndex),
       move: (toIndex: number, fromIndex?: number): void => this.move(toIndex, fromIndex),
       getBlockByIndex: (index: number): BlockAPIInterface => this.getBlockByIndex(index),
@@ -106,10 +107,11 @@ export default class BlocksAPI extends Module {
    * Deletes Block
    *
    * @param {number} blockIndex - index of Block to delete
+   * @param {number} serviceKey - serviceKey of Block to delete
    */
-  public delete(blockIndex?: number): void {
+  public delete(blockIndex?: number, serviceKey?: string): void {
     try {
-      this.Editor.BlockManager.removeBlock(blockIndex);
+      this.Editor.BlockManager.removeBlock(blockIndex, serviceKey);
     } catch (e) {
       _.logLabeled(e, 'warn');
 
@@ -127,7 +129,9 @@ export default class BlocksAPI extends Module {
     /**
      * After Block deletion currentBlock is updated
      */
-    this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
+    if (this.Editor.BlockManager.currentBlock) {
+      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
+    }
 
     this.Editor.Toolbar.close();
   }
@@ -190,24 +194,43 @@ export default class BlocksAPI extends Module {
   /**
    * Insert new Block
    *
-   * @param {string} type — Tool name
-   * @param {BlockToolData} data — Tool data to insert
-   * @param {ToolConfig} config — Tool config
-   * @param {number?} index — index where to insert new Block
-   * @param {boolean?} needToFocus - flag to focus inserted Block
+   * @param {object} options - insert options
+   * @param {string} options.type — Tool name
+   * @param {BlockToolData} options.data — Tool data to insert
+   * @param {ToolConfig} options.config — Tool config
+   * @param {number?} options.index — index where to insert new Block
+   * @param {boolean?} options.needToFocus - flag to focus inserted Block
+   * @param {boolean?} options.replace - flag to replace a Block
+   * @param {object} options.metadata - Meta Data Object
+   * @param {boolean} options.replaceByServiceKey - flag shows if block should be replaced by serviceKey
    */
-  public insert = (
-    type: string = this.config.initialBlock,
-    data: BlockToolData = {},
-    config: ToolConfig = {},
-    index?: number,
-    needToFocus?: boolean
-  ): void => {
+  public insert = ({
+    type = this.config.initialBlock,
+    data = {},
+    config = {},
+    index,
+    needToFocus = false,
+    replace = false,
+    metadata = {},
+    replaceByServiceKey = false,
+  }: {
+    type?: string;
+    data?: BlockToolData;
+    config?: ToolConfig;
+    index?: number;
+    needToFocus?: boolean;
+    replace?: boolean;
+    metadata?: MetaDataBlock;
+    replaceByServiceKey?: boolean;
+  } = {}): void => {
     this.Editor.BlockManager.insert({
       tool: type,
       data,
       index,
       needToFocus,
+      replace,
+      metadata,
+      replaceByServiceKey,
     });
   }
 

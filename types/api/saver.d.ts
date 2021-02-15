@@ -10,4 +10,18 @@ export interface Saver {
    * @returns {Promise<OutputData>}
    */
   save(): Promise<OutputData>;
+
+  /**
+   * disables ModificationsObserver to stop listen for changes
+   *
+   * @returns {void}
+   */
+  disableModificationsObserver(): void;
+
+  /**
+   * enables ModificationsObserver to start listen for changes
+   *
+   * @returns {void}
+   */
+  enableModificationsObserver(): void;
 }
